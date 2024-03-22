@@ -1,0 +1,184 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Postech - Self Service",
+    "description": "Documentação sobre os endpoints fornecidos pela API."
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Customer",
+      "description": "Endpoints"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/customer": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "description": "Endpoint para   os clientes.",
+        "responses": {
+          "200": {
+            "description": "Clientes encontrados",
+            "schema": {
+              "$ref": "#/definitions/ListCustomers"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "description": "Endpoint para criar um cliente.",
+        "parameters": [
+          {
+            "name": "createCustomer",
+            "in": "body",
+            "description": "Informações do usuário para cadastro.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateCustomer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cliente cadastrado",
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/customer/{cpf}": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "description": "Endpoint para obter um cliente pelo CPF.",
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "CPF do cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado",
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/customer/{id}": {
+      "delete": {
+        "tags": [
+          "Customer"
+        ],
+        "description": "Endpoint para remover um cliente.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente removido"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "Anderson"
+        },
+        "cpf": {
+          "type": "string",
+          "example": "12345678912"
+        },
+        "email": {
+          "type": "string",
+          "example": "anderson@gmail.com"
+        },
+        "orders": {
+          "type": "array",
+          "example": [],
+          "items": {}
+        }
+      }
+    },
+    "CreateCustomer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Anderson"
+        },
+        "cpf": {
+          "type": "string",
+          "example": "12345678912"
+        },
+        "email": {
+          "type": "string",
+          "example": "anderson@gmail.com"
+        }
+      },
+      "required": [
+        "name",
+        "cpf",
+        "email"
+      ]
+    },
+    "ListCustomers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Customer"
+      }
+    }
+  }
+}
