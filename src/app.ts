@@ -25,6 +25,6 @@ export default class App {
 	}
 
 	private async initDrivenAdapters(): Promise<void> {
-		await AppDataSource.initialize();
+		//await AppDataSource.initialize();
 	}
 }

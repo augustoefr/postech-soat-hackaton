@@ -131,3 +131,4 @@ dist
 
 # volumes Docker
 mongo-data
+postgres-data

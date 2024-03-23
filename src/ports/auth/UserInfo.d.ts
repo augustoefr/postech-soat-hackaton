@@ -1,4 +1,4 @@
-declare type CustomerAuthInfo = {
+declare type EmployeeAuthInfo = {
     id: string,
     name: string
 }

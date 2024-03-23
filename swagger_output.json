@@ -2,14 +2,18 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "Postech - Self Service",
+    "title": "Postech Soat Hackaton - Time Punch",
     "description": "Documentação sobre os endpoints fornecidos pela API."
   },
   "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
-      "name": "Customer",
+      "name": "TimePunch",
+      "description": "Endpoints"
+    },
+    {
+      "name": "Employee",
       "description": "Endpoints"
     }
   ],
@@ -24,45 +28,27 @@
     "application/json"
   ],
   "paths": {
-    "/customer": {
+    "/login": {
       "get": {
-        "tags": [
-          "Customer"
-        ],
-        "description": "Endpoint para   os clientes.",
+        "description": "",
         "responses": {
           "200": {
-            "description": "Clientes encontrados",
-            "schema": {
-              "$ref": "#/definitions/ListCustomers"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
+            "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/time-punch": {
       "post": {
         "tags": [
-          "Customer"
+          "TimePunch"
         ],
-        "description": "Endpoint para criar um cliente.",
-        "parameters": [
-          {
-            "name": "createCustomer",
-            "in": "body",
-            "description": "Informações do usuário para cadastro.",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateCustomer"
-            }
-          }
-        ],
+        "description": "Endpoint para um empregado bater o ponto.",
         "responses": {
           "201": {
-            "description": "Cliente cadastrado",
+            "description": "Batida de ponto registrada",
             "schema": {
-              "$ref": "#/definitions/Customer"
+              "$ref": "#/definitions/TimePunch"
             }
           },
           "400": {
@@ -71,52 +57,41 @@
         }
       }
     },
-    "/customer/{cpf}": {
+    "/time-punch/{year}/{month}/{day}": {
       "get": {
         "tags": [
-          "Customer"
+          "TimePunch"
         ],
         "description": "Endpoint para obter um cliente pelo CPF.",
         "parameters": [
           {
-            "name": "cpf",
+            "name": "year",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "CPF do cliente"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Cliente encontrado",
-            "schema": {
-              "$ref": "#/definitions/Customer"
-            }
+            "description": "Ano das batidas de ponto desejadas"
           },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/customer/{id}": {
-      "delete": {
-        "tags": [
-          "Customer"
-        ],
-        "description": "Endpoint para remover um cliente.",
-        "parameters": [
           {
-            "name": "id",
+            "name": "month",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "ID do cliente"
+            "description": "Mês das batidas de ponto desejadas"
+          },
+          {
+            "name": "day",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Dia das batidas de ponto desejadas"
           }
         ],
         "responses": {
           "200": {
-            "description": "Cliente removido"
+            "description": "Batidas de ponto encontradas",
+            "schema": {
+              "$ref": "#/definitions/TimePunches"
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -126,58 +101,27 @@
     }
   },
   "definitions": {
-    "Customer": {
+    "TimePunch": {
       "type": "object",
       "properties": {
         "id": {
           "type": "number",
           "example": 1
         },
-        "name": {
-          "type": "string",
-          "example": "Anderson"
+        "employee": {
+          "type": "number",
+          "example": 2
         },
-        "cpf": {
+        "time": {
           "type": "string",
-          "example": "12345678912"
-        },
-        "email": {
-          "type": "string",
-          "example": "anderson@gmail.com"
-        },
-        "orders": {
-          "type": "array",
-          "example": [],
-          "items": {}
+          "example": "2024-03-22 08:00:00"
         }
       }
     },
-    "CreateCustomer": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "example": "Anderson"
-        },
-        "cpf": {
-          "type": "string",
-          "example": "12345678912"
-        },
-        "email": {
-          "type": "string",
-          "example": "anderson@gmail.com"
-        }
-      },
-      "required": [
-        "name",
-        "cpf",
-        "email"
-      ]
-    },
-    "ListCustomers": {
+    "TimePunchesList": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Customer"
+        "$ref": "#/definitions/TimePunch"
       }
     }
   }
