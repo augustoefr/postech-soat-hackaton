@@ -4,11 +4,12 @@ import { ajv } from "./helper";
 const schema: Schema = {
   type: "object",
   properties: {
-    id: { type: "string" },
     name: { type: "string" },
     email: { type: "string", format: "email" },
+    matriculation: { type: "string" },
+    password: { type: "string" },
   },
-  required: ["id", "name", "email"],
+  required: ["name", "email", "matriculation", "password"],
   additionalProperties: false
 }
 

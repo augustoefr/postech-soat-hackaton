@@ -1,45 +1,54 @@
-import SessionCredentialHandler from "src/adapter/auth/SessionCredentialHandler";
 import { Request, Response } from "express";
-import GoogleOauthIntegration from "src/adapter/auth/GoogleOauthIntegration";
 import EmployeeController from "@controllers/EmployeeController";
 import EmployeeDatabaseRepository from "@database/repository/EmployeeDatabaseRepository";
+import Employee from "@entities/Employee";
+
+import bcrypt from "bcrypt";
+import jsonwebtoken from "jsonwebtoken";
 
 const employeeRepository = new EmployeeDatabaseRepository();
 const employeeController = new EmployeeController(employeeRepository);
 
-export default class AuthApiController{
+const jwtSecret = process.env.JWT_SECRET as string;
 
-    static async login(req: Request, res:Response){
-        const authApi = AuthApiController.getAuthApi(req);
-        const url = await authApi.generateAuthUrl();
-        console.log({ url});
-        res.redirect(url);
-    }
+export default class AuthApiController {
 
-    static async register(req: Request, res: Response){
+    static async login(req: Request, res: Response) {
+        const { login, password } = req.body;
         try {
-			const authApi = AuthApiController.getAuthApi(req);
-            if(req.query.code) await authApi.setClientCredentials(req.query.code as string);
-            const userData = await authApi.getUserData();
+            let employee = await employeeController.getByLogin(login);
+            if (employee) {
+                employee = employee as Employee;
+                if (await bcrypt.compare(password, employee.password)) {
+                    const token = jsonwebtoken.sign(
+                        { user: JSON.stringify(employee) },
+                        jwtSecret,
+                        { expiresIn: "60m" }
+                    )
 
-			if(userData){
-                const registeredEmployee = await employeeController.register(userData);
-
-                /* #swagger.responses[201] = {
-				schema: { $ref: "#/definitions/TimePunch" },
-				description: 'Colaborador registrado'
-    			} */
-                return res.status(201).json(registeredEmployee);
+                    return res.status(200).json({ token: token });
+                } else {
+                    return res.status(400).json({ message: "Incorrect login or password" });
+                }
             }
-
-		} catch (error) {
-			console.log("register error:", {error});
-		}
-        return res.status(401).json("Authentication failed");
+        } catch (error) {
+            return res.status(400).json(error);
+        }
     }
 
-    private static getAuthApi(request:Request){
-        const credentialHandler = new SessionCredentialHandler(request.session);
-        return new GoogleOauthIntegration(process.env.LOGIN_REDIRECT_URL as string, credentialHandler);
+    static async register(req: Request, res: Response) {
+        let employee: Employee = req.body;
+        try {
+            const registeredEmployee = await employeeController.register(employee);
+
+            /* #swagger.responses[201] = {
+            schema: { $ref: "#/definitions/TimePunch" },
+            description: 'Colaborador registrado'
+            } */
+            return res.status(201).json(registeredEmployee);
+
+        } catch (error) {
+            return res.status(400).json(error);
+        }
     }
 }

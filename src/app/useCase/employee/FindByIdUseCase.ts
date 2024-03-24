@@ -8,12 +8,12 @@ export default class FindByIdUseCase extends AbstractUseCase {
 		super();
 	}
 
-	async execute(id: string): Promise<Employee | null> {
+	async execute(id: number): Promise<Employee | null> {
 		const employee = await this.employeeRepository.findById(id);
 
 		if (!employee) {
 			this.setError({ message: 'Employee not found!' });
-            return null;
+			return null;
 		}
 
 		return employee;

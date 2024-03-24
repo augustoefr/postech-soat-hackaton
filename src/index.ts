@@ -1,6 +1,5 @@
 import App from './app';
 import 'dotenv/config';
-import session from "express-session";
 
 const app = new App();
 

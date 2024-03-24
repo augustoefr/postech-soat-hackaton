@@ -3,6 +3,7 @@ import TimePunchDatabaseRepository from "@database/repository/TimePunchDatabaseR
 import TimePunchController from "@controllers/TimePunchController";
 import IAuthenticatedRequest from "@ports/auth/IAuthenticatedRequest";
 import EmployeeDatabaseRepository from "@database/repository/EmployeeDatabaseRepository";
+import Employee from "@entities/Employee";
 
 const timePunchRepository = new TimePunchDatabaseRepository();
 const employeeRepository = new EmployeeDatabaseRepository();
@@ -13,23 +14,24 @@ export default class TimePunchApiController {
 	async create(req: Request, res: Response) {
 		// #swagger.tags = ['TimePunch']
 		// #swagger.description = 'Endpoint para um empregado bater o ponto.'
-		
-		const employee = (req as IAuthenticatedRequest).userInfo.id as string;
+
+		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
+		console.log(employee);
 
 		const session = req.session as any;
-  		session.count = (session.count || 0) + 1;
+		session.count = (session.count || 0) + 1;
 		const counter = session.count;
 
 		try {
-			const created = await controller.create(employee);
+			const created = await controller.create(employee.matriculation);
 
 			/* #swagger.responses[201] = {
 				schema: { $ref: "#/definitions/TimePunch" },
 				description: 'Batida de ponto registrada'
 			} */
-			return res.status(201).json({counter, ...created});
+			return res.status(201).json({ counter, ...created });
 		} catch (error) {
-			return res.status(400).json({counter, error});
+			return res.status(400).json({ counter, error });
 		}
 	}
 
@@ -40,11 +42,11 @@ export default class TimePunchApiController {
 		/* #swagger.parameters['month'] = { in: 'path', description: 'Mês das batidas de ponto desejadas' } */
 		/* #swagger.parameters['day'] = { in: 'path', description: 'Dia das batidas de ponto desejadas' } */
 		const { year, month, day } = req.params;
-		const employee = (req as IAuthenticatedRequest).userInfo.id as string;
+		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
 
 		try {
 			const timePunches = await controller
-			.getTimePunchesByPeriod(employee, parseInt(year), parseInt(month), parseInt(day));
+				.getTimePunchesByPeriod(employee.matriculation, parseInt(year), parseInt(month), parseInt(day));
 
 			/* #swagger.responses[200] = {
 				schema: { $ref: "#/definitions/TimePunches" },

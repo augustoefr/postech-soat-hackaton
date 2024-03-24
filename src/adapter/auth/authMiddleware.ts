@@ -1,17 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import SessionCredentialHandler from "./SessionCredentialHandler";
-import GoogleOauthIntegration from "./GoogleOauthIntegration";
 import IAuthenticatedRequest from "@ports/auth/IAuthenticatedRequest";
+import { Request, Response, NextFunction } from "express";
+import { AuthValidator } from "./AuthValidator";
 
-export default async function(req: Request, res: Response, next: NextFunction){
-    const credentialHandler = new SessionCredentialHandler(req.session);
-    const oauthIntegration = new GoogleOauthIntegration(process.env.LOGIN_REDIRECT_URL as string, credentialHandler);
+export default function (req: Request, res: Response, next: NextFunction) {
+    const token = (req.headers["authorization"] || '').replace('Bearer ', '');
+    const secret = process.env.JWT_SECRET;
 
     try {
-        const userData = await oauthIntegration.getUserData();
-        if(!userData) throw 'Cannot retrieve user data';
-
-        (req as IAuthenticatedRequest).userInfo = userData;
+        (req as IAuthenticatedRequest).userInfo = AuthValidator.validateToken(token as string, secret as string);
         next();
 
     } catch (err) {

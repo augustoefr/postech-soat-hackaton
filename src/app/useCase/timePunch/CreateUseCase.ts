@@ -3,28 +3,28 @@ import TimePunch from "@entities/TimePunch";
 import IEmployeeRepository from "@ports/IEmployeeRepository";
 import ITimePunchRepository from "@ports/ITimePunchRepository";
 import AbstractUseCase from "@useCases/AbstractUseCase";
-import FindByIdUseCase from "@useCases/employee/FindByIdUseCase";
+import FindByLoginUseCase from "@useCases/employee/FindByLoginUseCase";
 
 export default class CreateUseCase extends AbstractUseCase {
-	constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository) {
+    constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository) {
         super();
-	}
+    }
 
-	public async execute(employeeId: string): Promise<TimePunch | null> {
-        const employee = await this.getEmployee(employeeId)
-		
-		if (this.hasErrors()) {
-			return null;
-		}
+    public async execute(login: string): Promise<TimePunch | null> {
+        const employee = await this.getEmployee(login)
 
-        const customer: TimePunch = {employee: employee as Employee, time: new Date()};
+        if (this.hasErrors()) {
+            return null;
+        }
 
-		return await this.timePunchRepository.save(customer);
-	}
+        const customer: TimePunch = { employee: employee as Employee, time: new Date() };
 
-    private async getEmployee(employeeId: string):Promise<Employee | null>{
-        const findByIdUseCase = new FindByIdUseCase(this.employeeRepository);
-        const employee = await findByIdUseCase.execute(employeeId);
+        return await this.timePunchRepository.save(customer);
+    }
+
+    private async getEmployee(login: string): Promise<Employee | null> {
+        const findByLoginUseCase = new FindByLoginUseCase(this.employeeRepository);
+        const employee = await findByLoginUseCase.execute(login);
 
         if (!employee) {
             this.setError({ message: 'Employee not found' });

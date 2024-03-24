@@ -6,7 +6,7 @@ import auth from "../../auth/authMiddleware";
 
 const timeTrackingRoutes = HttpUtils.asyncRouterHandler(Router());
 
-timeTrackingRoutes.get('/time-punch' , auth, new TimePunchApiController().create);
+timeTrackingRoutes.post('/time-punch', auth, new TimePunchApiController().create);
 timeTrackingRoutes.get('/time-punch/:year/:month/:day', auth, new TimePunchApiController().getTimePunchesByPeriod);
 
 export default timeTrackingRoutes;

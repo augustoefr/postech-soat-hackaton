@@ -7,11 +7,11 @@ import IEmployeeRepository from "@ports/IEmployeeRepository";
 
 export default class TimePunchController {
 
-	constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository) {}
+	constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository) { }
 
-	async create(employeeId: string): Promise<TimePunch | null | IError[]> {
+	async create(login: string): Promise<TimePunch | null | IError[]> {
 		const createUseCase = new CreateUseCase(this.timePunchRepository, this.employeeRepository);
-		const created = await createUseCase.execute(employeeId);
+		const created = await createUseCase.execute(login);
 
 		if (createUseCase.hasErrors()) {
 			throw createUseCase.getErrors();
