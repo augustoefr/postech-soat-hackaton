@@ -17,7 +17,7 @@ export default class CreateUseCase extends AbstractUseCase {
 			return null;
 		}
 
-        const customer: TimePunch = {employee: employee as Employee};
+        const customer: TimePunch = {employee: employee as Employee, time: new Date()};
 
 		return await this.timePunchRepository.save(customer);
 	}

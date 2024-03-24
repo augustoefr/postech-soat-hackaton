@@ -2,6 +2,7 @@ import { AppDataSource } from "../data-source";
 import ITimePunchRepository from "@ports/ITimePunchRepository";
 import TimePunch from "@entities/TimePunch";
 import TimePunchModel from "../models/TimePunchModel";
+import { Between } from "typeorm";
 
 export default class TimePunchDatabaseRepository implements ITimePunchRepository {
     timePunchRepository = AppDataSource.getRepository(TimePunchModel);
@@ -28,12 +29,12 @@ export default class TimePunchDatabaseRepository implements ITimePunchRepository
     }
     
     async listByPeriod(employeeId: string, start: Date, end: Date): Promise<TimePunch[] | null>{
-        const timePunches = await this.timePunchRepository
-        .createQueryBuilder('timePunch')
-        .where('timePunch.employeeId = :employeeId', { employeeId })
-        .andWhere('timePunch.time >= :startDate', { start })
-        .andWhere('timePunch.time <= :endDate', { end })
-        .getMany();
+        const timePunches = await this.timePunchRepository.find({
+            where: {
+              employee: {id: employeeId},
+              time: Between(start, end)
+            }
+          });
         
         if(timePunches){
             return timePunches.map((model: TimePunchModel) => {
