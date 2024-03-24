@@ -9,7 +9,7 @@ export default class ListByPeriodUseCase extends AbstractUseCase {
 		super();
 	}
 
-	async execute(employeeId: number, year: number, month: number, day: number|undefined): Promise<TimePunch[] | null> {
+	async execute(employeeId: string, year: number, month: number, day: number|undefined): Promise<TimePunch[] | null> {
 		this.validateFields(employeeId, year, month, day);
 
 		if (this.hasErrors()) {
@@ -29,7 +29,7 @@ export default class ListByPeriodUseCase extends AbstractUseCase {
         return new Date(y, m-1, d || 1);
     }
 
-    private validateFields(employeeId: number, year: number, month: number, day: number|undefined) {
+    private validateFields(employeeId: string, year: number, month: number, day: number|undefined) {
 		const errorList: IError[] = [];
         
         if(!employeeId) errorList.push({ type: "ValidationError", message: 'Missing or invalid employee id' });

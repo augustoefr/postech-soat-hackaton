@@ -10,7 +10,7 @@ export default class CreateUseCase extends AbstractUseCase {
         super();
 	}
 
-	public async execute(employeeId: number): Promise<TimePunch | null> {
+	public async execute(employeeId: string): Promise<TimePunch | null> {
         const employee = await this.getEmployee(employeeId)
 		
 		if (this.hasErrors()) {
@@ -22,7 +22,7 @@ export default class CreateUseCase extends AbstractUseCase {
 		return await this.timePunchRepository.save(customer);
 	}
 
-    private async getEmployee(employeeId: number):Promise<Employee | null>{
+    private async getEmployee(employeeId: string):Promise<Employee | null>{
         const findByIdUseCase = new FindByIdUseCase(this.employeeRepository);
         const employee = await findByIdUseCase.execute(employeeId);
 

@@ -8,7 +8,7 @@ export default class FindByIdUseCase extends AbstractUseCase {
 		super();
 	}
 
-	async execute(id: number): Promise<Employee | null> {
+	async execute(id: string): Promise<Employee | null> {
 		const employee = await this.employeeRepository.findById(id);
 
 		if (!employee) {

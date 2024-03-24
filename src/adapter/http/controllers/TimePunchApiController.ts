@@ -14,7 +14,11 @@ export default class TimePunchApiController {
 		// #swagger.tags = ['TimePunch']
 		// #swagger.description = 'Endpoint para um empregado bater o ponto.'
 		
-		const employee: number = +(req as IAuthenticatedRequest).userInfo.id;
+		const employee = (req as IAuthenticatedRequest).userInfo.id as string;
+
+		const session = req.session as any;
+  		session.count = (session.count || 0) + 1;
+		const counter = session.count;
 
 		try {
 			const created = await controller.create(employee);
@@ -23,9 +27,9 @@ export default class TimePunchApiController {
 				schema: { $ref: "#/definitions/TimePunch" },
 				description: 'Batida de ponto registrada'
 			} */
-			return res.status(201).json(created);
+			return res.status(201).json({counter, ...created});
 		} catch (error) {
-			return res.status(400).json(error);
+			return res.status(400).json({counter, error});
 		}
 	}
 
@@ -36,7 +40,7 @@ export default class TimePunchApiController {
 		/* #swagger.parameters['month'] = { in: 'path', description: 'Mês das batidas de ponto desejadas' } */
 		/* #swagger.parameters['day'] = { in: 'path', description: 'Dia das batidas de ponto desejadas' } */
 		const { year, month, day } = req.params;
-		const employee: number = +(req as IAuthenticatedRequest).userInfo.id;
+		const employee = (req as IAuthenticatedRequest).userInfo.id as string;
 
 		try {
 			const timePunches = await controller

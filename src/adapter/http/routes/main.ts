@@ -5,5 +5,5 @@ const routes = [
 	authRoutes,
 	timeTrackingRoutes,
 ];
-console.log('teste');
+
 export default routes;

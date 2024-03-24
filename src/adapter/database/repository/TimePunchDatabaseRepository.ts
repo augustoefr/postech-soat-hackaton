@@ -13,24 +13,24 @@ export default class TimePunchDatabaseRepository implements ITimePunchRepository
         return TimePunchDatabaseRepository.mapDataModelToEntity(created);
     }
 
-    async listByDay(employee: number, day: Date): Promise<TimePunch[] | null> {
+    async listByDay(employeeId: string, day: Date): Promise<TimePunch[] | null> {
         const {start, end} = TimePunchDatabaseRepository
         .getStartEndByDatePart(day.getFullYear(), day.getMonth(), day.getDate());
 
-        return this.listByPeriod(employee, start, end);
+        return this.listByPeriod(employeeId, start, end);
     }
 
-    async listByMonth(employee: number, month: Date): Promise<TimePunch[] | null> {
+    async listByMonth(employeeId: string, month: Date): Promise<TimePunch[] | null> {
         const {start, end} = TimePunchDatabaseRepository
         .getStartEndByDatePart(month.getFullYear(), month.getMonth());
         
-        return this.listByPeriod(employee, start, end);
+        return this.listByPeriod(employeeId, start, end);
     }
     
-    async listByPeriod(employee: number, start: Date, end: Date): Promise<TimePunch[] | null>{
+    async listByPeriod(employeeId: string, start: Date, end: Date): Promise<TimePunch[] | null>{
         const timePunches = await this.timePunchRepository
         .createQueryBuilder('timePunch')
-        .where('timePunch.employeeId = :employee', { employee })
+        .where('timePunch.employeeId = :employeeId', { employeeId })
         .andWhere('timePunch.time >= :startDate', { start })
         .andWhere('timePunch.time <= :endDate', { end })
         .getMany();

@@ -14,7 +14,7 @@ export default class EmployeeDatabaseRepository implements IEmployeeRepository {
 		return EmployeeDatabaseRepository.mapDataModelToEntity(created);
 	}
 	
-	async findById(id: number): Promise<Employee | null> {
+	async findById(id: string): Promise<Employee | null> {
 		const result = await this.employeeRepository.findOneBy({ id });
 
 		if (result) {
@@ -39,14 +39,16 @@ export default class EmployeeDatabaseRepository implements IEmployeeRepository {
 	static mapDataModelToEntity(model: EmployeeModel): Employee {
 		return new Employee(
 			model.id,
-			model.name
+			model.name,
+			model.email
 		);
 	}
 
 	static mapDataEntityToModel(entity: Employee): EmployeeModel {
 		return new EmployeeModel(
 			entity.id,
-			entity.name
+			entity.name,
+			entity.email
 		);
 	}
 }
