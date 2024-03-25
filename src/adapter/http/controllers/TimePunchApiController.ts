@@ -4,10 +4,12 @@ import TimePunchController from "@controllers/TimePunchController";
 import IAuthenticatedRequest from "@ports/auth/IAuthenticatedRequest";
 import EmployeeDatabaseRepository from "@database/repository/EmployeeDatabaseRepository";
 import Employee from "@entities/Employee";
+import ResendEmailIntegration from "src/adapter/email/ResendEmailIntegration";
 
 const timePunchRepository = new TimePunchDatabaseRepository();
 const employeeRepository = new EmployeeDatabaseRepository();
-const controller = new TimePunchController(timePunchRepository, employeeRepository);
+const mailSender = new ResendEmailIntegration();
+const controller = new TimePunchController(timePunchRepository, employeeRepository, mailSender);
 
 export default class TimePunchApiController {
 
@@ -18,10 +20,6 @@ export default class TimePunchApiController {
 		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
 		console.log(employee);
 
-		const session = req.session as any;
-		session.count = (session.count || 0) + 1;
-		const counter = session.count;
-
 		try {
 			const created = await controller.create(employee.matriculation);
 
@@ -29,9 +27,9 @@ export default class TimePunchApiController {
 				schema: { $ref: "#/definitions/TimePunch" },
 				description: 'Batida de ponto registrada'
 			} */
-			return res.status(201).json({ counter, ...created });
+			return res.status(201).json(created);
 		} catch (error) {
-			return res.status(400).json({ counter, error });
+			return res.status(400).json(error);
 		}
 	}
 
@@ -54,6 +52,25 @@ export default class TimePunchApiController {
 			} */
 			return res.status(200).json(timePunches);
 		} catch (error) {
+			return res.status(400).json(error);
+		}
+	}
+
+	
+	async sendTimePunchReport(req: Request, res: Response) {
+		const { year, month } = req.params;
+		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
+
+		try {
+			const report = await controller.sendTimePunchReport(employee, Number(year), Number(month));
+
+			/* #swagger.responses[200] = {
+				schema: { $ref: "#/definitions/TimePunches" },
+				description: 'Relatório de espelho de ponto enviado'
+			} */
+			return res.status(200).json(report);
+		} catch (error) {
+			console.log(error);
 			return res.status(400).json(error);
 		}
 	}

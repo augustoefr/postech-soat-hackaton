@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Time Punches</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Espelho de Ponto</h2>
+    <h3>Colaborador: <%= employee.name %></h3>
+    
+    <% if(!workdays.length){ %>
+        <p style="padding:10px;background:#ddcc88;border:solid 1px rgba(0,0,0,.1);">
+            Não há registros de ponto no período.
+        </p>
+
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Dia</th>
+                    <% for(let i = 1; i <= maxPunchesLength; i++){ %>
+                        <th><%= i %>ª batida</th>
+                    <% } %>
+                    <th style="background-color: #dddddd;">Horas Trabalhadas</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% workdays.forEach((workday, index) => { %>
+                    <tr>
+                        <th><%= workday.day.toLocaleDateString('pt-BR') %></th>
+                        <% workday.timePunches.forEach(punch => { %>
+                            <td><%= punch.time.toLocaleTimeString('pt-BR') %></td>
+                        <% }); %>
+                        <td style="background-color: #eeeeee;"><%= workday.formattedWorkingHours %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <p>Total de Horas no Período: <%= formattedWorkingHours %></p>
+    <% } %>
+</body>
+</html>
