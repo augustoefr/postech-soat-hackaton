@@ -129,7 +129,7 @@ Abaixo estão descritos os endpoints disponibilizados pela aplicação.
 ### Visualização de Registros
 
 ```
-  POST /time-punch/:year/:month/:day
+  GET /time-punch/:year/:month/:day
 ```
 
 | Header key | Description                      |
