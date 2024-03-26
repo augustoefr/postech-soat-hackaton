@@ -28,7 +28,7 @@ cd postech-soat-hackaton
 #### 3. Instale as dependências
 
 ```bash
-yarn add
+yarn install
 #ou npm install
 ```
 
