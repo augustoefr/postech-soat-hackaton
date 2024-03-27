@@ -36,7 +36,7 @@ export default class CreateUseCase extends AbstractUseCase {
 
     private getDateWithoutTimezone(): Date {
         let date = new Date()
-        var userTimezoneOffset = date.getTimezoneOffset() * 60000;
-        return new Date(date.getTime() - userTimezoneOffset);
+        date.setHours(date.getHours() - 3);
+        return date;
     }
 }
