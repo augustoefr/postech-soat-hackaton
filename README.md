@@ -169,7 +169,7 @@ Abaixo estão descritos os endpoints disponibilizados pela aplicação.
 ### Relatórios
 
 ```
-  POST /time-punch/report/:year/month
+  POST /time-punch/report/:year/:month
 ```
 
 | Header key | Description                      |
