@@ -37,7 +37,8 @@ services:
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_PORT=${DATABASE_PORT}
       - RUN_ON=${RUN_ON}
-      - SESSION_SECRET=${SESSION_SECRET}
+      - EMAIL_SENDER_ADDRESS=${EMAIL_SENDER_ADDRESS}
+      - EMAIL_SENDER_PASSWORD=${EMAIL_SENDER_PASSWORD}
     depends_on:
       database:
         condition: service_healthy

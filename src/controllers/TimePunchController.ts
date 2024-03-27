@@ -14,7 +14,7 @@ const reportEmailTemplate = path.resolve(__dirname, '..') + '/adapter/email/temp
 
 export default class TimePunchController {
 
-	constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository, readonly emailSender: IEmailApi) {}
+	constructor(readonly timePunchRepository: ITimePunchRepository, readonly employeeRepository: IEmployeeRepository, readonly emailSender: IEmailApi) { }
 
 	async create(login: string): Promise<TimePunch | null | IError[]> {
 		const createUseCase = new CreateUseCase(this.timePunchRepository, this.employeeRepository);
@@ -38,13 +38,13 @@ export default class TimePunchController {
 		return Promise.resolve(timePunches);
 	}
 
-	
-	async sendTimePunchReport(employee: Employee, year: number, month: number): Promise<any>{
-		
+
+	async sendTimePunchReport(employee: Employee, year: number, month: number): Promise<any> {
+
 		const reportUseCase = new SendReportUseCase(this.timePunchRepository, this.employeeRepository, this.emailSender, reportEmailTemplate);
 		const report = reportUseCase.execute(employee, year, month);
 
-		if(reportUseCase.hasErrors()){
+		if (reportUseCase.hasErrors()) {
 			Promise.reject(reportUseCase.getErrors());
 		}
 

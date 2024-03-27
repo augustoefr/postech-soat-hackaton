@@ -4,11 +4,11 @@ import TimePunchController from "@controllers/TimePunchController";
 import IAuthenticatedRequest from "@ports/auth/IAuthenticatedRequest";
 import EmployeeDatabaseRepository from "@database/repository/EmployeeDatabaseRepository";
 import Employee from "@entities/Employee";
-import ResendEmailIntegration from "src/adapter/email/ResendEmailIntegration";
+import NodeMailerEmailIntegration from "src/adapter/email/NodeMailerEmailIntegration";
 
 const timePunchRepository = new TimePunchDatabaseRepository();
 const employeeRepository = new EmployeeDatabaseRepository();
-const mailSender = new ResendEmailIntegration();
+const mailSender = new NodeMailerEmailIntegration();
 const controller = new TimePunchController(timePunchRepository, employeeRepository, mailSender);
 
 export default class TimePunchApiController {
@@ -18,7 +18,6 @@ export default class TimePunchApiController {
 		// #swagger.description = 'Endpoint para um empregado bater o ponto.'
 
 		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
-		console.log(employee);
 
 		try {
 			const created = await controller.create(employee.matriculation);
@@ -56,7 +55,7 @@ export default class TimePunchApiController {
 		}
 	}
 
-	
+
 	async sendTimePunchReport(req: Request, res: Response) {
 		const { year, month } = req.params;
 		const employee = JSON.parse((req as IAuthenticatedRequest).userInfo.user) as Employee;
@@ -70,7 +69,6 @@ export default class TimePunchApiController {
 			} */
 			return res.status(200).json(report);
 		} catch (error) {
-			console.log(error);
 			return res.status(400).json(error);
 		}
 	}

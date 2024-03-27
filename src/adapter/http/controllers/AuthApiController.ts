@@ -15,10 +15,8 @@ export default class AuthApiController {
 
     static async login(req: Request, res: Response) {
         const { login, password } = req.body;
-        console.log({ login, password })
         try {
             let employee = await employeeController.getByLogin(login);
-            console.log({employee});
             if (employee) {
                 employee = employee as Employee;
                 if (await bcrypt.compare(password, employee.password)) {

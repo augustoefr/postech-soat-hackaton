@@ -16,18 +16,18 @@ export default class SendReportUseCase extends AbstractUseCase {
 	}
 
 	async execute(employee: Employee, year: number, month: number): Promise<any> {
-        const timePunches = await this.getTimePunches(employee, year, month);
+		const timePunches = await this.getTimePunches(employee, year, month);
 
-        if (this.hasErrors()) {
+		if (this.hasErrors()) {
 			return;
 		}
 
-        //MOCK
-        // function generateTimePunchesForMonth(): TimePunch[] {
+		//MOCK
+		// function generateTimePunchesForMonth(): TimePunch[] {
 		// 	const punches: TimePunch[] = [];
 		// 	const startDate = new Date(2024, 2, 1); // March 1, 2024
 		// 	const endDate = new Date(2024, 2, 31); // March 31, 2024
-		
+
 		// 	const currentDate = new Date(startDate);
 		// 	while (currentDate <= endDate) {
 		// 		const randomNumberOfPunches = 4; // Generate random number of punches per day
@@ -42,7 +42,7 @@ export default class SendReportUseCase extends AbstractUseCase {
 		// 		}
 		// 		currentDate.setDate(currentDate.getDate() + 1);
 		// 	}
-		
+
 		// 	return punches;
 		// }
 		// const timePunches = generateTimePunchesForMonth();
@@ -50,15 +50,12 @@ export default class SendReportUseCase extends AbstractUseCase {
 
 		const report = new TimePunchReport(employee, timePunches as TimePunch[]);
 
-		
-		console.log(JSON.stringify(report, undefined, 4));
-
 		// ejs.renderFile(require('path').resolve(__dirname, '..') + '/adapter/email/templates/TimePunchReport.ejs', report, (err: any, html: string) => {
 		ejs.renderFile(this.emailTemplate, report, (err: any, html: string) => {
 			if (err) {
 				return console.error(err);
 			}
-			
+
 			this.emailSender.send(employee.email, 'Espelho de ponto', html)
 		});
 
@@ -67,15 +64,15 @@ export default class SendReportUseCase extends AbstractUseCase {
 
 	}
 
-    private async getTimePunches(employee: Employee, year: number, month: number): Promise<TimePunch[] | null>{
-        const listUseCase = new ListByPeriodUseCase(this.timePunchRepository);
-        const timePunches = await listUseCase.execute(employee.matriculation, year, month, undefined);
+	private async getTimePunches(employee: Employee, year: number, month: number): Promise<TimePunch[] | null> {
+		const listUseCase = new ListByPeriodUseCase(this.timePunchRepository);
+		const timePunches = await listUseCase.execute(employee.matriculation, year, month, undefined);
 
-        if(listUseCase.hasErrors()){
-            this.setErrors(listUseCase.getErrors());
-        }
+		if (listUseCase.hasErrors()) {
+			this.setErrors(listUseCase.getErrors());
+		}
 
-        return timePunches;
-    }
+		return timePunches;
+	}
 
 }
