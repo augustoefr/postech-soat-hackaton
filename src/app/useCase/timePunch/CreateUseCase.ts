@@ -17,7 +17,7 @@ export default class CreateUseCase extends AbstractUseCase {
             return null;
         }
 
-        const customer: TimePunch = { employee: employee as Employee, time: new Date() };
+        const customer: TimePunch = { employee: employee as Employee, time: this.getDateWithoutTimezone() };
 
         return await this.timePunchRepository.save(customer);
     }
@@ -32,5 +32,11 @@ export default class CreateUseCase extends AbstractUseCase {
         }
 
         return employee;
+    }
+
+    private getDateWithoutTimezone(): Date {
+        let date = new Date()
+        var userTimezoneOffset = date.getTimezoneOffset() * 60000;
+        return new Date(date.getTime() - userTimezoneOffset);
     }
 }
